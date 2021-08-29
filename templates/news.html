@@ -1,0 +1,52 @@
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'flatpages/default.html' %}
+{% load my_filters %}
+<!-- Название у нас будет Новости -->
+{% block title %}
+Новости
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим все публикации -->
+{% block content %}
+<h1>Список публикаций</h1>
+<h1>Всего публикаций: {{news|length}}</h1>
+    <table>
+            <tr>
+                <td>
+                    <b>Заголовок</b>
+                </td>
+                <td>
+                     <b><pre> | </pre></b>
+                </td>
+                <td>
+                    <b>Дата</b>
+                </td>
+                <td>
+                     <b><pre> | </pre></b>
+                </td>
+                <td>
+                    <b>Предпросмотр</b>
+                </td>
+            </tr>
+        {% for post in news %}
+            <tr>
+                <td>
+                   <a href="/news/{{post.id}}">{{ post.postName|censor }} </a>
+                </td>
+                <td>
+                     <b><pre> | </pre></b>
+                </td>
+                <td>
+                    {{post.postDate|date:'d m Y'}}
+                </td>
+                <td>
+                    <b><pre> | </pre></b>
+                </td>
+                <td>
+                    {{post.postBody|truncatewords:20|censor}}
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+
+{% endblock content %}
