@@ -1,20 +1,34 @@
-<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
 {% extends 'flatpages/default.html' %}
 {% load my_filters %}
 <!-- Название у нас будет Новости -->
 {% block title %}
-Новости
+Поиск публикаций
 {% endblock title %}
+
 
 <!-- В контенте на странице мы выводим все публикации -->
 {% block content %}
 
+<!-- Перед таблицей добавим форму для поиска -->
+<form method="GET">
+
+    {{ filter.form }} <!-- Форму от фильтров за нас сделает django. А вот кнопку, увы придётся делать самому -->
+    <input type="submit" value="Найти">
+
+</form>
+
+
 <h1>Список публикаций</h1>
-<h1>Показано {{news|length}} публикаций.</h1>
     <table>
             <tr>
                 <td>
                     <b>Заголовок</b>
+                </td>
+                <td>
+                     <b><pre> | </pre></b>
+                </td>
+                <td>
+                    <b>Категория</b>
                 </td>
                 <td>
                      <b><pre> | </pre></b>
@@ -29,10 +43,18 @@
                     <b>Предпросмотр</b>
                 </td>
             </tr>
-        {% for post in news %}
+        {% for post in filter.qs %}
             <tr>
                 <td>
                    <a href="/news/{{post.id}}">{{ post.postName|censor }} </a>
+                </td>
+                <td>
+                     <b><pre> | </pre></b>
+                </td>
+                <td>
+                    {% for i in post.postCategory.values %}
+                    {{i.name}}
+                    {% endfor %}
                 </td>
                 <td>
                      <b><pre> | </pre></b>

@@ -30,7 +30,7 @@ commQTY = 26
 catQTY = 5
 from_the_scratch = 1
 
-category_name = ['Электоринка','Индустрия 4.0','Робототехника','Нанотехнологии']
+category_name = ['Электроника','Индустрия 4.0','Робототехника','Нанотехнологии']
 post_name = ['Практический опыт', 'Задача организации', 'Богатый опыт', 'Значимость проблем']
 user_name = []
 text_data = {
@@ -75,23 +75,23 @@ list_last_name = ['Иванов','Белов','Смирнов','Перов','С�
 # Создать двух пользователей (с помощью метода User.objects.create_user)
 if from_the_scratch:
     for n in range(1, usersQTY):
-        globals()[f'user{n}'] = User.objects.create_user(username = f"UserName{n}", password = f"UN{n}pass",
-                                                         last_name=f"{list_last_name[random.choice(range(1, 6))]}",
-                                                         first_name = f"{list_name[random.choice(range(1, 6))]}",)
+        globals()[f'user{n}'] = User.objects.create_user(username = f"UserName{n}{random.choice(range(1000, 2000))}", password = f"UN{n}pass",
+                                                         last_name=f"{list_last_name[random.choice(range(0, 5))]}",
+                                                         first_name = f"{list_name[random.choice(range(0, 5))]}",)
 
     # Создать два объекта модели Author, связанные с пользователями.
     for n in range(1, authQTY):
-        globals()[f'author{n}'] = Author.objects.create(authorUser = globals()[f'user{n}'])
+        globals()[f'author{n}'] = Author.objects.create(authorUser = globals()[f'user{random.choice(range(0, usersQTY))}'])
 
     # Добавить 4 категории в модель Category
     for n in range(1, catQTY):
-        globals()[f'cat{n}'] = Category.objects.create(name = f'Категория {n}: {category_name[random.choice(range(1, 5))]}')
+        globals()[f'cat{n}'] = Category.objects.create(name = f'Категория {n}: {category_name[n-1]}')
 
 # Добавить 2 статьи и 1 новость
 for n in range(1, postQTY):
     d=random.choice(range(1, 5))
     globals()[f'post{n}'] = Post.objects.create(postType = f'{random.choice(ptype)}',
-                                                postName = f'Публикация номер {n}: {post_name[d]}',
+                                                postName = f'Публикация номер {n}: {post_name[d-1]}',
                                                 postBody = f'{text_data.get(d)}',
                                                 postAuthor = Author.objects.get(id = random.choice(aindex)),
                                                 )

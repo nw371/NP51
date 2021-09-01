@@ -11,7 +11,7 @@
 Время: {{ post.postDate|date:'H:m'}}
 
 <br>
-Автор: {{ post.postAuthor.authorUser}}
+Автор: {{ post.postAuthor.authorUser.first_name}} {{ post.postAuthor.authorUser.last_name}}
 <br>
 Категория:
 {% for i in post.postCategory.values %}
