@@ -10,4 +10,6 @@ urlpatterns = [
     # pk — это первичный ключ товара, который будет выводиться у нас в шаблон
     path('search/', SearchNews.as_view()),
     path('add/', AddPub.as_view()),
+    path('<int:pk>/edit/',PostDetail.as_view()),
+    path('<int:pk>/delete/',PostDetail.as_view()),
 ]

@@ -1,5 +1,5 @@
 from django.views.generic import ListView, DetailView, TemplateView,FormView
-from .forms import ProductForm
+from .forms import PostForm
 from .filters import PostFilter
 from .models import Post
 
@@ -32,7 +32,7 @@ class AddPub(FormView):
     model = Post
     template_name = 'add.html'
     context_object_name = 'add'
-    form_class = ProductForm
+    form_class = PostForm
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)  # создаём новую форму, забиваем в неё данные из POST-запроса
@@ -42,4 +42,13 @@ class AddPub(FormView):
 
         return super().get(request, *args, **kwargs)
 
+class PostEdit(DetailView):
+    model = Post  # модель всё та же, но мы хотим получать детали конкретно отдельного товара
+    template_name = 'edit.html'  # название шаблона будет product.html
+    context_object_name = 'post'  # название объекта. в нём будет
+
+class PostDelete(DetailView):
+    model = Post  # модель всё та же, но мы хотим получать детали конкретно отдельного товара
+    template_name = 'delete.html'  # название шаблона будет product.html
+    context_object_name = 'post'  # название объекта. в нём будет
 
