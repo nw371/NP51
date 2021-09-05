@@ -69,7 +69,7 @@ comment_text = {
        "оценить значение дальнейших направлений развитая системы массового участия."
 }
 
-list_name = ['Сергей','Андрей','Иван','Никита','Михаил']
+list_first_name = ['Сергей', 'Андрей', 'Иван', 'Никита', 'Михаил']
 list_last_name = ['Иванов','Белов','Смирнов','Перов','Сидоров']
 
 # Создать двух пользователей (с помощью метода User.objects.create_user)
@@ -77,11 +77,11 @@ if from_the_scratch:
     for n in range(1, usersQTY):
         globals()[f'user{n}'] = User.objects.create_user(username = f"UserName{n}{random.choice(range(1000, 2000))}", password = f"UN{n}pass",
                                                          last_name=f"{list_last_name[random.choice(range(0, 5))]}",
-                                                         first_name = f"{list_name[random.choice(range(0, 5))]}",)
+                                                         first_name = f"{list_first_name[random.choice(range(0, 5))]}", )
 
     # Создать два объекта модели Author, связанные с пользователями.
     for n in range(1, authQTY):
-        globals()[f'author{n}'] = Author.objects.create(authorUser = globals()[f'user{random.choice(range(0, usersQTY))}'])
+        globals()[f'author{n}'] = Author.objects.create(user = globals()[f'user{random.choice(range(0, usersQTY))}'])
 
     # Добавить 4 категории в модель Category
     for n in range(1, catQTY):
@@ -90,24 +90,24 @@ if from_the_scratch:
 # Добавить 2 статьи и 1 новость
 for n in range(1, postQTY):
     d=random.choice(range(1, 5))
-    globals()[f'post{n}'] = Post.objects.create(postType = f'{random.choice(ptype)}',
-                                                postName = f'Публикация номер {n}: {post_name[d-1]}',
-                                                postBody = f'{text_data.get(d)}',
-                                                postAuthor = Author.objects.get(id = random.choice(aindex)),
+    globals()[f'post{n}'] = Post.objects.create(type = f'{random.choice(ptype)}',
+                                                name = f'Публикация номер {n}: {post_name[d-1]}',
+                                                body = f'{text_data.get(d)}',
+                                                author = Author.objects.get(id = random.choice(aindex)),
                                                 )
 # Присвоить им категории
 for n in range(1, postQTY):
-    Post.objects.get(id = n).postCategory.add(Category.objects.get(id = random.choice(range(1, catQTY))))
+    Post.objects.get(id = n).category.add(Category.objects.get(id = random.choice(range(1, catQTY))))
 
 # (как минимум в одной статье/новости должно быть не меньше 2 категорий)
 for n in [3, 5, 7]:
-    Post.objects.get(id = n).postCategory.add(Category.objects.get(id = random.choice(range(1, catQTY))))
+    Post.objects.get(id = n).category.add(Category.objects.get(id = random.choice(range(1, catQTY))))
 
 # Создать как минимум 4 комментария к разным объектам модели Post (в каждом объекте должен быть как минимум один комментарий).
 for n in range(1, commQTY):
     globals()[f'comment{n}'] = Comment.objects.create(post = globals()[f'post{random.choice(range(1, postQTY))}'],
                                                       user = globals()[f'user{random.choice(range(1, usersQTY))}'],
-                                                      commentBody = f'{comment_text.get(random.choice(range(1, 5)))}')
+                                                      body = f'{comment_text.get(random.choice(range(1, 5)))}')
 
 # Применяя функции like() и dislike() к статьям/новостям и комментариям, скорректировать рейтинги этих объектов.
 for n in range(1, 100):
@@ -123,35 +123,35 @@ for n in range(1, 3):
 #ВЫДОД ДАННЫХ
 
 # Вывести username и рейтинг лучшего пользователя (применяя сортировку и возвращая поля первого объекта).
-Author.objects.order_by('-autorRating')[:1]
+Author.objects.order_by('-rating')[:1]
 
 # Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
 pid = 0 #сохраним сюда айди поста, чтобы потом использовать для выведения коментов
-p = Post.objects.order_by('-postRating')[:1].values()
+p = Post.objects.order_by('-rating')[:1].values()
 for i in p:
-    print(f"Дата поста: {i['postDate']}")
-    print(f"Автор поста: {Author.objects.get(id=i['postAuthor_id']).authorUser.username}")
-    print(f"Рейтинг поста: {i['postRating']}")
-    print(f"Заголовок поста: {i['postName']}")
+    print(f"Дата поста: {i['date']}")
+    print(f"Автор поста: {Author.objects.get(id=i['author_id']).user.username}")
+    print(f"Рейтинг поста: {i['rating']}")
+    print(f"Заголовок поста: {i['name']}")
     print(f"Предпросмотр поста: {Post.objects.get(id=i['id']).preview()}")
     pid = i['id']
 
 # Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье.
 c = Comment.objects.filter(post=pid) #используем сохранённый айди поста
 for i in c.values():
-    print(f"Comment date: {i['commentDate']}")
+    print(f"Comment date: {i['date']}")
     usr = i["user_id"]
     print(f"Comment user: {User.objects.get(id=usr).username}")
-    print(f"Comment rating: {i['commentRating']}")
-    print(f"Comment: {i['commentBody']}")
+    print(f"Comment rating: {i['rating']}")
+    print(f"Comment: {i['body']}")
     print("----------------")
 
 #вывод категории поста
-# cat=Post.objects.get(id=1).postCategory.values("name")
+# cat=Post.objects.get(id=1).category.values("name")
 # for i in cat.values():
 #     print(i['name'])
 
 #готовая команда для создания отдельных тестовых постов
-#Post.objects.create(postType = 'AR', postName = 'Пост для проверки типа', postBody = f'Проверяем, как работает тип поста по умолчанию.', postAuthor = Author.objects.get(id = 1))
+#Post.objects.create(type = 'AR', name = 'Пост для проверки типа', body = f'Проверяем, как работает тип поста по умолчанию.', author = Author.objects.get(id = 1))
 
 

@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title><!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
 {% extends 'flatpages/default.html' %}
 {% load my_filters %}
 <!-- Название у нас будет proudcts -->
@@ -18,28 +14,23 @@
 Автор: {{ post.postAuthor.authorUser.first_name}} {{ post.postAuthor.authorUser.last_name}}
 <br>
 Категория:
-{% for i in post.postCategory.values %}
+{% for i in post.category.values %}
 {{i.name}}
 {% endfor %}
 
 <br>
-Рейтинг: {{ post.postRating}}
+Рейтинг: {{ post.rating}}
 <br>
-Тип публикации: {{post.get_postType_display}}
+Тип публикации: {{post.get_type_display}}
 {% endblock title %}
 
 <!-- В контенте на странице мы выводим сам товар, ID которого было передано в адрес -->
 {% block content %}
 <br>
 <br>
-<h1>{{ post.postBody|censor}}</h1>
+<h1>{{ post.body|censor}}</h1>
 <br>
 <br>
 <br>
 
-{% endblock content %}</title>
-</head>
-<body>
-
-</body>
-</html>
+{% endblock content %}

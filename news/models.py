@@ -5,39 +5,50 @@ from django.db.models import Sum
 
 class Author(models.Model):
     # cвязь «один к одному» с встроенной моделью пользователей User;
-    authorUser = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     # рейтинг пользователя
-    autorRating = models.SmallIntegerField(default=0)
+    rating = models.SmallIntegerField(default=0)
 
     def update_rating(self):
         # суммарный рейтинг каждой статьи автора
-        poRe = self.post_set.aggregate(SumPostRating=Sum('postRating'))
+        poRe = self.post_set.aggregate(SumPostRating=Sum('rating'))
         pstrtng = 0
         pstrtng += poRe.get('SumPostRating')
 
         # суммарный рейтинг всех комментариев автора
-        coRe = self.authorUser.comment_set.aggregate(SumComsRating=Sum('commentRating'))
+        coRe = self.user.comment_set.aggregate(SumComsRating=Sum('rating'))
         cmmrtng = 0
         cmmrtng += coRe.get('SumComsRating')
 
         # суммарный рейтинг всех комментариев к статьям автора
         x = 0
-        allPosts = Post.objects.filter(postAuthor_id=self.id).values('id')
+        allPosts = Post.objects.filter(author_id=self.id).values('id')
         # сначала пробегаем через все посты автора, чтобы подцепить коменты
         for i in allPosts:
-            globals()[f'p{i}'] = Comment.objects.filter(post_id=i['id']).values('commentRating')
+            globals()[f'p{i}'] = Comment.objects.filter(post_id=i['id']).values('rating')
             # и потом выдёргиваем рейтинги коментов
             for j in globals()[f'p{i}']:
-                x = x + j['commentRating']
+                x = x + j['rating']
 
-        self.autorRating = pstrtng * 3 + cmmrtng + x
+        self.rating = pstrtng * 3 + cmmrtng + x
         self.save()
+    def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name}'
 
+    class Meta:
+        verbose_name = 'Автор'
+        verbose_name_plural = 'Авторы'
 
 class Category(models.Model):
     # единственное поле: название категории. Поле должно быть уникальным
     name = models.CharField(max_length=128, unique=True)
 
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
 class Post(models.Model):
     news = 'NS'
@@ -48,32 +59,36 @@ class Post(models.Model):
     ]
 
     # поле с выбором — «статья» или «новость»
-    postType = models.CharField(max_length=2, choices=TYPES, default=news)
+    type = models.CharField(max_length=2, choices=TYPES, default=news)
     # автоматически добавляемая дата и время создания
-    postDate = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=True)
     # заголовок статьи/новости
-    postName = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     # текст статьи/новости
-    postBody = models.TextField()
+    body = models.TextField()
     # рейтинг статьи/новости
-    postRating = models.SmallIntegerField(default=0)
+    rating = models.SmallIntegerField(default=0)
 
     # связь «один ко многим» с моделью Author
-    postAuthor = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
     # связь «многие ко многим» с моделью Category (с дополнительной моделью PostCategory)
-    postCategory = models.ManyToManyField(Category, through='PostCategory')
+    category = models.ManyToManyField(Category, through='PostCategory')
 
     def preview(self):
-        postPreview = self.postBody[0:123]
-        return f"{postPreview}..."
+        preview = self.body[0:123]
+        return f"{preview}..."
 
     def like(self):
-        self.postRating += 1
+        self.rating += 1
         self.save()
 
     def dislike(self):
-        self.postRating -= 1
+        self.rating -= 1
         self.save()
+
+    class Meta:
+        verbose_name = 'Публикация'
+        verbose_name_plural = 'Публикации'
 
 
 class PostCategory(models.Model):
@@ -89,16 +104,20 @@ class Comment(models.Model):
     # связь «один ко многим» с встроенной моделью User
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # текст комментария
-    commentBody = models.TextField()
+    body = models.TextField()
     # дата и время создания комментария
-    commentDate = models.DateField(auto_now_add=True)
+    date = models.DateField(auto_now_add=True)
     # рейтинг комментария
-    commentRating = models.SmallIntegerField(default=0)
+    rating = models.SmallIntegerField(default=0)
 
     def like(self):
-        self.commentRating += 1
+        self.rating += 1
         self.save()
 
     def dislike(self):
-        self.commentRating -= 1
+        self.rating -= 1
         self.save()
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'

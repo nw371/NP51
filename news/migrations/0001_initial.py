@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             name='Author',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('autorRating', models.SmallIntegerField(default=0)),
-                ('authorUser', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('rating', models.SmallIntegerField(default=0)),
+                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -33,12 +33,12 @@ class Migration(migrations.Migration):
             name='Post',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('postType', models.CharField(choices=[('NS', 'Новость'), ('AL', 'Статья')], default='NS', max_length=2)),
-                ('postDate', models.DateTimeField(auto_now_add=True)),
-                ('postName', models.CharField(max_length=255)),
-                ('postBody', models.TextField()),
-                ('postRating', models.SmallIntegerField(default=0)),
-                ('postAuthor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='news.author')),
+                ('type', models.CharField(choices=[('NS', 'Новость'), ('AL', 'Статья')], default='NS', max_length=2)),
+                ('date', models.DateTimeField(auto_now_add=True)),
+                ('name', models.CharField(max_length=255)),
+                ('body', models.TextField()),
+                ('rating', models.SmallIntegerField(default=0)),
+                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='news.author')),
             ],
         ),
         migrations.CreateModel(
@@ -51,16 +51,16 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='post',
-            name='postCategory',
+            name='category',
             field=models.ManyToManyField(through='news.PostCategory', to='news.Category'),
         ),
         migrations.CreateModel(
             name='Comment',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('commentBody', models.TextField()),
-                ('commentDate', models.DateField(auto_now_add=True)),
-                ('commentRating', models.SmallIntegerField(default=0)),
+                ('body', models.TextField()),
+                ('date', models.DateField(auto_now_add=True)),
+                ('rating', models.SmallIntegerField(default=0)),
                 ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='news.post')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],

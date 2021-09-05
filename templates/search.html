@@ -46,7 +46,7 @@
         {% for post in filter.qs %}
             <tr>
                 <td>
-                   <a href="/news/{{post.id}}">{{ post.postName|censor }} </a>
+                   <a href="/news/{{post.id}}">{{ post.name|censor }} </a>
                     <br>
                     <a href="/news/{{post.id}}/edit">Редактировать</a>
                     <br>
@@ -58,7 +58,7 @@
                      <b><pre> | </pre></b>
                 </td>
                 <td>
-                    {% for i in post.postCategory.values %}
+                    {% for i in post.category.values %}
                     {{i.name}}
                     {% endfor %}
                 </td>
@@ -66,13 +66,13 @@
                      <b><pre> | </pre></b>
                 </td>
                 <td>
-                    {{post.postDate|date:'d m Y'}}
+                    {{post.date|date:'d m Y'}}
                 </td>
                 <td>
                     <b><pre> | </pre></b>
                 </td>
                 <td>
-                    {{post.postBody|truncatewords:20|censor}}
+                    {{post.body|truncatewords:20|censor}}
                 </td>
             </tr>
         {% endfor %}
