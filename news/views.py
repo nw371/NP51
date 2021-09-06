@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView, TemplateView, FormView, UpdateView
+from django.views.generic import ListView, DetailView, TemplateView, FormView, UpdateView, DeleteView
 from .forms import PostForm
 from .filters import PostFilter
 from .models import Post
@@ -52,8 +52,9 @@ class PostEdit(UpdateView):
         id = self.kwargs.get('pk')
         return Post.objects.get(pk=id)
 
-class PostDelete(DetailView):
-    model = Post  # модель всё та же, но мы хотим получать детали конкретно отдельного товара
+class PostDelete(DeleteView):
+
     template_name = 'delete.html'  # название шаблона будет product.html
-    context_object_name = 'post'  # название объекта. в нём будет
+    queryset = Post.objects.all()
+    success_url = '/news/'
 
