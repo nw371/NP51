@@ -5,9 +5,9 @@ from django.db.models import Sum
 
 class Author(models.Model):
     # cвязь «один к одному» с встроенной моделью пользователей User;
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     # рейтинг пользователя
-    rating = models.SmallIntegerField(default=0)
+    rating = models.SmallIntegerField(default=0, verbose_name='Рейтинг')
 
     def update_rating(self):
         # суммарный рейтинг каждой статьи автора
@@ -41,7 +41,7 @@ class Author(models.Model):
 
 class Category(models.Model):
     # единственное поле: название категории. Поле должно быть уникальным
-    name = models.CharField(max_length=128, unique=True)
+    name = models.CharField(max_length=128, unique=True, verbose_name='Название')
 
     def __str__(self):
         return self.name
@@ -61,13 +61,13 @@ class Post(models.Model):
     # поле с выбором — «статья» или «новость»
     type = models.CharField(max_length=2, choices=TYPES, default=news)
     # автоматически добавляемая дата и время создания
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата')
     # заголовок статьи/новости
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name='Название')
     # текст статьи/новости
     body = models.TextField()
     # рейтинг статьи/новости
-    rating = models.SmallIntegerField(default=0)
+    rating = models.SmallIntegerField(default=0, verbose_name='Рейтинг')
 
     # связь «один ко многим» с моделью Author
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
@@ -90,6 +90,9 @@ class Post(models.Model):
         verbose_name = 'Публикация'
         verbose_name_plural = 'Публикации'
 
+    def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
+        return f'/news/{self.id}'
+
 
 class PostCategory(models.Model):
     # связь «один ко многим» с моделью Post
@@ -106,9 +109,9 @@ class Comment(models.Model):
     # текст комментария
     body = models.TextField()
     # дата и время создания комментария
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(auto_now_add=True, verbose_name='Дата')
     # рейтинг комментария
-    rating = models.SmallIntegerField(default=0)
+    rating = models.SmallIntegerField(default=0, verbose_name='Рейтинг')
 
     def like(self):
         self.rating += 1

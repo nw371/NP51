@@ -48,7 +48,7 @@
                 <td>
                    <a href="/news/{{post.id}}">{{ post.name|censor }} </a>
                     <br>
-                    <a href="/news/{{post.id}}/edit">Редактировать</a>
+                    <a href="{% url 'post_edit' post.id %}" > Редактировать</a>
                     <br>
                     <a href="/news/{{post.id}}/delete">Удалить</a>
                     <br>

@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView, TemplateView,FormView
+from django.views.generic import ListView, DetailView, TemplateView, FormView, UpdateView
 from .forms import PostForm
 from .filters import PostFilter
 from .models import Post
@@ -42,10 +42,15 @@ class AddPub(FormView):
 
         return super().get(request, *args, **kwargs)
 
-class PostEdit(DetailView):
-    model = Post  # модель всё та же, но мы хотим получать детали конкретно отдельного товара
+class PostEdit(UpdateView):
+    #model = Post  # модель всё та же, но мы хотим получать детали конкретно отдельного товара
     template_name = 'edit.html'  # название шаблона будет product.html
-    context_object_name = 'post'  # название объекта. в нём будет
+    #context_object_name = 'post'  # название объекта. в нём будет
+    form_class = PostForm
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return Post.objects.get(pk=id)
 
 class PostDelete(DetailView):
     model = Post  # модель всё та же, но мы хотим получать детали конкретно отдельного товара

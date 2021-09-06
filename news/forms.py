@@ -10,11 +10,7 @@ class PostForm(ModelForm):
         fields = ['name', 'body', 'category', 'author']
 
 
-class PostEdit(ModelForm):
-
-    class Meta:
-        model = Post
-        fields = ['name',
-                  'body',
-                  'category',
-                  'author']
+# class PostEdit(ModelForm):
+#     class Meta:
+#         model = Post
+#         fields = ['name', 'body', 'category', 'author']
