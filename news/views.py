@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, TemplateView, FormView, UpdateView, DeleteView
 from .forms import PostForm
 from .filters import PostFilter
@@ -42,7 +43,7 @@ class AddPub(FormView):
 
         return super().get(request, *args, **kwargs)
 
-class PostEdit(UpdateView):
+class PostEdit(LoginRequiredMixin, UpdateView):
     #model = Post  # модель всё та же, но мы хотим получать детали конкретно отдельного товара
     template_name = 'edit.html'  # название шаблона будет product.html
     #context_object_name = 'post'  # название объекта. в нём будет
@@ -57,4 +58,8 @@ class PostDelete(DeleteView):
     template_name = 'delete.html'  # название шаблона будет product.html
     queryset = Post.objects.all()
     success_url = '/news/'
+
+class LoginPage(TemplateView):
+    template_name = 'login.html'
+
 
